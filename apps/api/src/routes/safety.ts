@@ -50,12 +50,16 @@ export async function safetyRoutes(app: FastifyInstance): Promise<void> {
         return reply.code(404).send({ error: "not_found" });
       }
 
+      // Passing isOk as its own bound boolean (rather than reusing $2 for both the enum
+      // assignment and a text comparison) avoids Postgres's parameter-type inference getting
+      // confused about what type $2 is when the same placeholder is used two different ways.
+      const isOk = response === "ok";
       await client.query(
         `UPDATE wellness_checks SET responded_at = now(), response = $2, response_mode = $3,
-           resolved_at = CASE WHEN $2 = 'ok' THEN now() ELSE resolved_at END,
-           resolved_by = CASE WHEN $2 = 'ok' THEN $4 ELSE resolved_by END
+           resolved_at = CASE WHEN $5 THEN now() ELSE resolved_at END,
+           resolved_by = CASE WHEN $5 THEN $4 ELSE resolved_by END
          WHERE id = $1`,
-        [id, response, responseMode, auth.userId]
+        [id, response, responseMode, auth.userId, isOk]
       );
 
       // "need_help" always escalates to a real safety event - the ladder in

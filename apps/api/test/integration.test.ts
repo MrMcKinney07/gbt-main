@@ -215,6 +215,62 @@ describe("contact attempts: idempotency and append-only enforcement", () => {
     expect(["distant", "far_distant", "gps_degraded"]).toContain(body.outOfTurfException.classification);
   });
 
+});
+
+describe("safety: wellness-check respond", () => {
+  it("accepts an 'ok' response and resolves the check", async () => {
+    const { accessToken } = await login(CANVASSER_EMAIL);
+    const shiftRes = await app.inject({
+      method: "POST",
+      url: "/shifts/start",
+      headers: { authorization: `Bearer ${accessToken}` },
+      payload: { campaignId: CAMPAIGN_ID, deviceId: DEVICE_ID, consentRecordIds: [] },
+    });
+    const shiftId = shiftRes.json().id;
+
+    // Insert a wellness_check directly rather than waiting on the real watchdog timer, which
+    // runs on a much longer cycle than is practical for a unit-speed test.
+    const client = await pool.connect();
+    let wellnessCheckId: string;
+    try {
+      await client.query("BEGIN");
+      await client.query(`SELECT set_config('app.org_id', $1, true)`, [ORG_ID]);
+      const inserted = await client.query(
+        `INSERT INTO wellness_checks (shift_id, user_id, triggered_by, idle_seconds_at_trigger, prompted_at)
+         VALUES ($1, $2, 'inactivity_watchdog', 900, now()) RETURNING id`,
+        [shiftId, "00000000-0000-0000-0000-000000000012"]
+      );
+      wellnessCheckId = inserted.rows[0].id;
+      await client.query("COMMIT");
+    } finally {
+      client.release();
+    }
+
+    const res = await app.inject({
+      method: "POST",
+      url: `/wellness-checks/${wellnessCheckId}/respond`,
+      headers: { authorization: `Bearer ${accessToken}` },
+      payload: { response: "ok", responseMode: "tap" },
+    });
+    expect(res.statusCode, res.body).toBe(200);
+
+    const verifyClient = await pool.connect();
+    try {
+      await verifyClient.query("BEGIN");
+      await verifyClient.query(`SELECT set_config('app.org_id', $1, true)`, [ORG_ID]);
+      const check = await verifyClient.query(`SELECT response, resolved_at FROM wellness_checks WHERE id = $1`, [wellnessCheckId]);
+      await verifyClient.query("COMMIT");
+      expect(check.rows[0].response).toBe("ok");
+      expect(check.rows[0].resolved_at).not.toBeNull();
+    } finally {
+      verifyClient.release();
+    }
+
+    await app.inject({ method: "POST", url: `/shifts/${shiftId}/end`, headers: { authorization: `Bearer ${accessToken}` } });
+  });
+});
+
+describe("contact attempts: append-only enforcement (DB layer)", () => {
   it("the database itself rejects a direct UPDATE of a non-scoring column (append-only trigger)", async () => {
     // This confirms the DB-layer guarantee the build instructions ask us to re-verify: even a
     // client connected as gbt_app (the same role the API uses) cannot bypass the append-only
