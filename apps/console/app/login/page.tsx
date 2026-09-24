@@ -63,19 +63,17 @@ export default function LoginPage() {
         <EagleMark className="h-14 w-14" fill="white" />
       </div>
 
-      <div className="w-full max-w-sm space-y-5">
-        {/* The eagle: a transparent-background cutout (public/brand/bald-eagle-cutout.png,
-            credit in CREDIT.md), not a big rectangular photo panel — a previous version of
-            this page gave the photo its own full-height half of the screen, which was more
-            weight than a login page needs. Floating it, sized modestly, over the ribbon/
-            title reads as a hero graphic instead of a hero panel. */}
-        {/* eslint-disable-next-line @next/next/no-img-element -- decorative, no next/image benefit for a small PNG cutout */}
-        <img
-          src="/brand/bald-eagle-cutout.png"
-          alt=""
-          className="mx-auto h-28 w-auto drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]"
-        />
+      {/* The eagle: a transparent-background cutout (public/brand/bald-eagle-cutout.png,
+          credit in CREDIT.md), pinned large in the top-right corner rather than sitting in
+          the centered form column — a corner graphic rather than a hero panel. */}
+      {/* eslint-disable-next-line @next/next/no-img-element -- decorative, no next/image benefit for a fixed-position PNG cutout */}
+      <img
+        src="/brand/bald-eagle-cutout.png"
+        alt=""
+        className="pointer-events-none fixed right-0 top-0 z-0 h-[70vh] w-auto max-h-[640px] opacity-90 drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)]"
+      />
 
+      <div className="relative z-10 w-full max-w-sm space-y-5">
         <div className="text-center">
           <span className="ribbon-banner">
             <span className="ribbon-banner__text">Field Operations</span>

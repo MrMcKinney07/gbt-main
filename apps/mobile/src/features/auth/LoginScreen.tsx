@@ -63,23 +63,24 @@ export function LoginScreen({ onLoggedIn }: Props) {
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
+          {/* A transparent-background cutout (assets/brand/bald-eagle-cutout.png), not a
+              boxed photo panel -- a previous version gave this its own bordered, near-full-
+              width rectangle sized to the photo's aspect ratio, which took up far more of
+              the screen than a login page needs. resizeMode="contain" shows the whole bird
+              at a modest, fixed height with no cropping and no box around it. Placed above
+              the ribbon/title so it reads first. */}
+          <Image
+            source={require('../../../assets/brand/bald-eagle-cutout.png')}
+            style={styles.eagleImage}
+            resizeMode="contain"
+          />
+
           <View style={styles.ribbonWrap}>
             <RibbonBanner label="Field Operations" width={200} />
           </View>
           <Text style={styles.title}>Canvasser sign in</Text>
           <Text style={styles.subtitle}>Demo credentials are pre-filled.</Text>
           <View style={styles.tricolorRule} />
-
-          {/* A transparent-background cutout (assets/brand/bald-eagle-cutout.png), not a
-              boxed photo panel -- a previous version gave this its own bordered, near-full-
-              width rectangle sized to the photo's aspect ratio, which took up far more of
-              the screen than a login page needs. resizeMode="contain" shows the whole bird
-              at a modest, fixed height with no cropping and no box around it. */}
-          <Image
-            source={require('../../../assets/brand/bald-eagle-cutout.png')}
-            style={styles.eagleImage}
-            resizeMode="contain"
-          />
 
           <View style={styles.card}>
             <Text style={styles.label}>Email</Text>
