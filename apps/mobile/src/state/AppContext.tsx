@@ -6,7 +6,7 @@ import { createHttpApiClient, DEFAULT_API_BASE_URL, type ApiClient } from '../ap
 import { SyncWorker } from '../sync/syncWorker';
 import { wireSyncTriggers } from '../sync/triggers';
 
-interface AppContextValue {
+export interface AppContextValue {
   db: SQLiteDatabase | null;
   api: ApiClient;
   syncWorker: SyncWorker | null;
@@ -15,7 +15,10 @@ interface AppContextValue {
   setAccessToken: (token: string | null) => void;
 }
 
-const AppContext = createContext<AppContextValue | null>(null);
+// Exported (not just the hook) so tests can render feature components against a
+// lightweight fake context value without booting a real SQLite db / API client — see
+// test/duress-parity.test.tsx.
+export const AppContext = createContext<AppContextValue | null>(null);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [db, setDb] = useState<SQLiteDatabase | null>(null);
