@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
-  ImageBackground,
+  Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -51,16 +51,13 @@ export function LoginScreen({ onLoggedIn }: Props) {
   }
 
   return (
-    // Bald eagle photo credit: assets/brand/CREDIT.md (USFWS, public domain, Todd Harless
-    // 2006) — same asset as apps/console's login page, kept in sync by hand.
-    <ImageBackground
-      source={require('../../../assets/brand/bald-eagle.jpg')}
-      style={styles.background}
-      resizeMode="cover"
-      imageStyle={styles.backgroundImage}
-    >
-      <View style={styles.scrim} />
-      <FlyingEagle top={70} />
+    <View style={styles.background}>
+      {/* The animated icon still sweeps across the whole screen (see FlyingEagle) — this is
+          the separate, large, real eagle photo the previous version buried behind a heavy
+          scrim as a full-bleed background. It's its own panel now, placed between the
+          title and the form so it's the clear visual center of the page rather than a tinted
+          backdrop. Photo credit: assets/brand/CREDIT.md (USFWS, public domain). */}
+      <FlyingEagle top={56} />
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -75,6 +72,14 @@ export function LoginScreen({ onLoggedIn }: Props) {
           <Text style={styles.title}>Canvasser sign in</Text>
           <Text style={styles.subtitle}>Demo credentials are pre-filled.</Text>
           <View style={styles.tricolorRule} />
+
+          <View style={styles.eaglePanel}>
+            <Image
+              source={require('../../../assets/brand/bald-eagle.jpg')}
+              style={styles.eagleImage}
+              resizeMode="cover"
+            />
+          </View>
 
           <View style={styles.card}>
             <Text style={styles.label}>Email</Text>
@@ -113,31 +118,20 @@ export function LoginScreen({ onLoggedIn }: Props) {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  background: { flex: 1 },
-  backgroundImage: { opacity: 0.9 },
-  // Flat navy scrim rather than a gradient (no expo-linear-gradient dependency for one
-  // screen) — still leaves the eagle's white head/tail and blue sky clearly visible while
-  // keeping the form legible over it.
-  scrim: {
-    ...StyleSheet.absoluteFill,
-    backgroundColor: 'rgba(8, 18, 38, 0.55)',
-  },
+  background: { flex: 1, backgroundColor: colors.primary },
   container: { flex: 1 },
-  scrollContent: { flexGrow: 1, justifyContent: 'flex-end', padding: spacing.lg, paddingBottom: spacing.xl },
+  scrollContent: { flexGrow: 1, justifyContent: 'center', padding: spacing.lg, paddingVertical: spacing.xl },
   ribbonWrap: { alignItems: 'center', marginBottom: spacing.sm },
   title: {
     fontSize: 28,
     fontWeight: '700',
     color: '#ffffff',
     textAlign: 'center',
-    textShadowColor: 'rgba(0,0,0,0.5)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 4,
   },
   subtitle: {
     fontSize: 14,
@@ -153,8 +147,27 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
     borderRadius: 2,
     overflow: 'hidden',
-    backgroundColor: colors.primary,
+    backgroundColor: '#ffffff',
   },
+  // aspectRatio matches the source photo's own ~0.8 (2400x3000 portrait), not an arbitrary
+  // wide band — a short wide crop of a portrait action shot loses everything that makes it
+  // read as "an eagle" (this is the same mistake the console login's first pass made; see
+  // apps/console/app/login/page.tsx's comment on the two-panel layout).
+  eaglePanel: {
+    width: '100%',
+    aspectRatio: 0.82,
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginBottom: spacing.lg,
+    borderWidth: 3,
+    borderColor: '#8a2432',
+    shadowColor: '#000',
+    shadowOpacity: 0.35,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 10,
+  },
+  eagleImage: { width: '100%', height: '100%' },
   card: {
     backgroundColor: colors.surface,
     borderRadius: 12,

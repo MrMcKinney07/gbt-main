@@ -136,7 +136,8 @@ h1, h2, h3, .font-display {
   }
 }
 
-/* Ribbon banner: a folded double-pointed ribbon in flat navy/white/red bands — the one
+/* Ribbon banner: a folded double-pointed ribbon in flat red/white/blue bands, top to
+   bottom, in that order — the one
    place on the page allowed to show all three colors as literal stripes (everywhere else
    red stays reserved for accents/safety per docs/ARCHITECTURE.md; this is a static
    decorative banner shape, never an interactive or status element). */
@@ -149,12 +150,12 @@ h1, h2, h3, .font-display {
   clip-path: polygon(0% 50%, 9% 0%, 91% 0%, 100% 50%, 91% 100%, 9% 100%);
   background: linear-gradient(
     to bottom,
-    var(--color-brand-navy) 0%,
-    var(--color-brand-navy) 33%,
+    var(--color-brand-accent-red) 0%,
+    var(--color-brand-accent-red) 33%,
     #ffffff 33%,
     #ffffff 67%,
-    var(--color-brand-accent-red) 67%,
-    var(--color-brand-accent-red) 100%
+    var(--color-brand-navy) 67%,
+    var(--color-brand-navy) 100%
   );
   box-shadow: 0 6px 16px -4px rgba(0, 0, 0, 0.5);
 }
