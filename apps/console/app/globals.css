@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+
+  /* Reserved monitoring-family colors — see lib/colors.ts and docs/ARCHITECTURE.md.
+     SAFETY = red family, ACCOUNTABILITY = violet family. Never reused for anything else,
+     never swapped between the two, never blended into a shared "alert" color. */
+  --color-safety: #dc2626;
+  --color-safety-strong: #991b1b;
+  --color-safety-soft: #fee2e2;
+  --color-safety-border: #fca5a5;
+  --color-safety-text: #7f1d1d;
+
+  --color-accountability: #7c3aed;
+  --color-accountability-strong: #5b21b6;
+  --color-accountability-soft: #ede9fe;
+  --color-accountability-border: #c4b5fd;
+  --color-accountability-text: #4c1d95;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --color-safety: var(--color-safety);
+  --color-safety-strong: var(--color-safety-strong);
+  --color-safety-soft: var(--color-safety-soft);
+  --color-safety-border: var(--color-safety-border);
+  --color-safety-text: var(--color-safety-text);
+
+  --color-accountability: var(--color-accountability);
+  --color-accountability-strong: var(--color-accountability-strong);
+  --color-accountability-soft: var(--color-accountability-soft);
+  --color-accountability-border: var(--color-accountability-border);
+  --color-accountability-text: var(--color-accountability-text);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.maplibregl-popup-content {
+  padding: 0 !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.2) !important;
+}
+
+/* Safety event markers pulse — a purely visual cue reserved for the safety family so it
+   never gets reused for accountability markers (see lib/colors.ts). */
+@keyframes safety-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.55);
+  }
+  100% {
+    box-shadow: 0 0 0 14px rgba(220, 38, 38, 0);
+  }
+}
+.safety-marker-pulse {
+  animation: safety-pulse 1.6s ease-out infinite;
+}
