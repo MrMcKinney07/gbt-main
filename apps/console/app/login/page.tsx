@@ -55,29 +55,39 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen w-full flex-1 flex-col overflow-hidden bg-brand-navy-deep lg:flex-row">
+    <div className="stars-field relative flex min-h-screen w-full flex-1 flex-col items-center justify-center overflow-hidden bg-brand-navy-deep px-4 py-10">
       {/* An eagle gliding across the full page, left off-screen to right off-screen, looping.
-          Fixed positioning + a wide viewport-relative path (see .flying-eagle/@keyframes
-          fly-across in globals.css) so it crosses both panels, not just one. */}
-      <div className="flying-eagle pointer-events-none fixed left-0 top-[14%] z-20" aria-hidden="true">
-        <EagleMark className="h-16 w-16 lg:h-24 lg:w-24" fill="white" />
+          See .flying-eagle/@keyframes fly-across in globals.css. This is the small vector
+          accent; the large real photo cutout below is the main graphic. */}
+      <div className="flying-eagle pointer-events-none fixed left-0 top-[10%] z-20" aria-hidden="true">
+        <EagleMark className="h-14 w-14" fill="white" />
       </div>
 
-      {/* Left: brand + form, on the navy/stars field. */}
-      <div className="stars-field relative z-10 flex w-full flex-col items-center justify-center px-4 py-12 lg:w-[46%] lg:px-12">
-        <div className="w-full max-w-sm space-y-6">
-          <div className="text-center">
-            <span className="ribbon-banner">
-              <span className="ribbon-banner__text">Field Operations</span>
-            </span>
-            <h1 className="mt-4 font-display text-3xl font-semibold tracking-wide text-white">
-              Field Console
-            </h1>
-            <p className="mt-1.5 text-sm text-white/70">Sign in to manage today&apos;s canvass.</p>
-            <div className="tricolor-rule mx-auto mt-5 w-16 rounded-full" />
-          </div>
+      <div className="w-full max-w-sm space-y-5">
+        {/* The eagle: a transparent-background cutout (public/brand/bald-eagle-cutout.png,
+            credit in CREDIT.md), not a big rectangular photo panel — a previous version of
+            this page gave the photo its own full-height half of the screen, which was more
+            weight than a login page needs. Floating it, sized modestly, over the ribbon/
+            title reads as a hero graphic instead of a hero panel. */}
+        {/* eslint-disable-next-line @next/next/no-img-element -- decorative, no next/image benefit for a small PNG cutout */}
+        <img
+          src="/brand/bald-eagle-cutout.png"
+          alt=""
+          className="mx-auto h-28 w-auto drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]"
+        />
 
-          <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border-t-4 border-brand-accent-red bg-white p-7 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)]">
+        <div className="text-center">
+          <span className="ribbon-banner">
+            <span className="ribbon-banner__text">Field Operations</span>
+          </span>
+          <h1 className="mt-4 font-display text-3xl font-semibold tracking-wide text-white">
+            Field Console
+          </h1>
+          <p className="mt-1.5 text-sm text-white/70">Sign in to manage today&apos;s canvass.</p>
+          <div className="tricolor-rule mx-auto mt-5 w-16 rounded-full" />
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border-t-4 border-brand-accent-red bg-white p-7 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)]">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-slate-700">
                 Email
@@ -149,24 +159,6 @@ export default function LoginPage() {
               Password for all three: <code>{DEMO_PASSWORD}</code>
             </p>
           </div>
-        </div>
-      </div>
-
-      {/* Right: the eagle, full-bleed. Photo credit: public/brand/CREDIT.md (USFWS, public
-          domain, Todd Harless 2006). This panel is close to full viewport height, which is
-          why it's here rather than in a short wide strip — a portrait action shot like this
-          one loses everything that makes it recognizable when it's cropped down to a
-          letterbox band. */}
-      <div className="relative min-h-[45vh] w-full flex-1 overflow-hidden lg:min-h-screen">
-        {/* eslint-disable-next-line @next/next/no-img-element -- decorative full-bleed panel; next/image's fixed sizing fought the responsive crop here */}
-        <img
-          src="/brand/bald-eagle.jpg"
-          alt="A bald eagle in flight against a blue sky"
-          className="h-full w-full object-cover object-[62%_38%]"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-navy-deep/35 via-transparent to-transparent lg:bg-gradient-to-r lg:from-brand-navy-deep/50 lg:via-transparent lg:to-transparent" />
-        <div className="absolute inset-y-0 left-0 w-[3px] bg-brand-accent-red lg:block hidden" />
-        <div className="absolute inset-x-0 top-0 h-[3px] bg-brand-accent-red lg:hidden" />
       </div>
     </div>
   );
