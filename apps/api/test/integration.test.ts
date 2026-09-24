@@ -170,8 +170,18 @@ describe("contact attempts: idempotency and append-only enforcement", () => {
     const secondBody = second.json();
     expect(secondBody.id).toBe(firstBody.id);
 
-    // Confirm only one row exists for this idempotency key.
-    const count = await pool.query(`SELECT COUNT(*) AS n FROM contact_attempts WHERE idempotency_key = $1`, [idempotencyKey]);
+    // Confirm only one row exists for this idempotency key (RLS needs app.org_id set even for
+    // this ad-hoc check, same as the app's own withOrgTx would do inside a real request).
+    const client = await pool.connect();
+    let count;
+    try {
+      await client.query("BEGIN");
+      await client.query(`SELECT set_config('app.org_id', $1, true)`, [ORG_ID]);
+      count = await client.query(`SELECT COUNT(*) AS n FROM contact_attempts WHERE idempotency_key = $1`, [idempotencyKey]);
+      await client.query("COMMIT");
+    } finally {
+      client.release();
+    }
     expect(Number(count.rows[0].n)).toBe(1);
   });
 

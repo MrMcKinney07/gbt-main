@@ -154,6 +154,7 @@ export interface WatchdogShiftRow {
   shiftId: string;
   userId: string;
   campaignId: string;
+  actualStart: string;
   windowSeconds: number;
   lastDoorActivityAt: string | null;
   lastMovementAt: string | null;
@@ -172,7 +173,7 @@ export async function getActiveShiftsForWatchdog(client: OrgTxClient): Promise<W
      ON CONFLICT (shift_id) DO NOTHING`
   );
   const result = await client.query(
-    `SELECT s.id AS shift_id, s.user_id, s.campaign_id,
+    `SELECT s.id AS shift_id, s.user_id, s.campaign_id, s.actual_start,
             sw.window_seconds, sw.last_door_activity_at, sw.last_movement_at,
             sw.movement_radius_m, sw.status, sw.paused_until
      FROM shifts s
@@ -183,6 +184,7 @@ export async function getActiveShiftsForWatchdog(client: OrgTxClient): Promise<W
     shiftId: r.shift_id,
     userId: r.user_id,
     campaignId: r.campaign_id,
+    actualStart: r.actual_start,
     windowSeconds: r.window_seconds,
     lastDoorActivityAt: r.last_door_activity_at,
     lastMovementAt: r.last_movement_at,
@@ -192,11 +194,24 @@ export async function getActiveShiftsForWatchdog(client: OrgTxClient): Promise<W
   }));
 }
 
-/** Most recent contact_attempt timestamp for this user/campaign (used only as an activity signal, never counted). */
-export async function getLastDoorActivityAt(client: OrgTxClient, userId: string, campaignId: string): Promise<string | null> {
+/**
+ * Most recent contact_attempt timestamp for this user/campaign AT OR AFTER `notBefore` (used
+ * only as an activity signal, never counted) - callers pass the current shift's actual_start,
+ * so a prior shift's last door (possibly hours or days old) never counts as "recent" activity
+ * for a shift that just started. Returns null if no door has happened yet in that window, which
+ * callers should treat as "not idle yet, anchor the idle clock at the shift start" rather than
+ * "infinitely idle".
+ */
+export async function getLastDoorActivityAt(
+  client: OrgTxClient,
+  userId: string,
+  campaignId: string,
+  notBefore: string
+): Promise<string | null> {
   const result = await client.query(
-    `SELECT MAX(arrive_at) AS last_at FROM contact_attempts WHERE canvasser_user_id = $1 AND campaign_id = $2`,
-    [userId, campaignId]
+    `SELECT MAX(arrive_at) AS last_at FROM contact_attempts
+     WHERE canvasser_user_id = $1 AND campaign_id = $2 AND arrive_at >= $3::timestamptz`,
+    [userId, campaignId, notBefore]
   );
   return result.rows[0]?.last_at ?? null;
 }

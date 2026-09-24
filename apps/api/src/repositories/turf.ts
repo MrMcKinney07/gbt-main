@@ -97,8 +97,8 @@ export async function insertContactAttempt(
        $9, $10, $11, $12, $13, $14, ST_SetSRID(ST_MakePoint($15, $16), 4326),
        $17, $18, $19, $20, CASE WHEN $21::double precision IS NULL THEN NULL ELSE ST_SetSRID(ST_MakePoint($21, $22), 4326) END, $23,
        $24, $25, $26, $27, $28,
-       $29, $30, $31, $32,
-       $33, $34, $35
+       $29, $30, $31, $32, $33,
+       $34, $35, $36
      )
      ON CONFLICT (idempotency_key) DO NOTHING
      RETURNING id, idempotency_key, campaign_id, assignment_id, walkbook_id, turf_id, address_id,

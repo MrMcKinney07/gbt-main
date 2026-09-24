@@ -71,8 +71,11 @@ async function evaluateOrgWatchdog(client: OrgTxClient): Promise<void> {
   for (const shift of shifts) {
     if (shift.status === "paused_break" || shift.status === "suppressed") continue;
 
-    const lastDoorAt = (await getLastDoorActivityAt(client, shift.userId, shift.campaignId)) ?? null;
-    const anchorTime = lastDoorAt ? new Date(lastDoorAt).getTime() : now; // no doors yet: treat "now" as not-yet-idle
+    // Scoped to THIS shift (arrive_at >= shift.actualStart) - a door knocked on a previous
+    // shift, possibly hours ago, must never count as "recent" activity for a shift that just
+    // started (see repositories/safety.ts getLastDoorActivityAt for the full reasoning).
+    const lastDoorAt = await getLastDoorActivityAt(client, shift.userId, shift.campaignId, shift.actualStart);
+    const anchorTime = lastDoorAt ? new Date(lastDoorAt).getTime() : new Date(shift.actualStart).getTime();
     const doorGapSeconds = Math.max(0, Math.floor((now - anchorTime) / 1000));
 
     const breadcrumbs = await getRecentBreadcrumbs(client, shift.shiftId, shift.windowSeconds);
@@ -129,8 +132,11 @@ async function evaluateOrgWatchdog(client: OrgTxClient): Promise<void> {
       continue;
     }
 
-    // T3+ elapsed: escalate if the wellness check is still unresponded.
-    if (openCheck && !openCheck.responded_at) {
+    // T3+ elapsed: escalate if the wellness check is still unresponded. Only fire this once per
+    // crossing (status wasn't already idle_alert) - otherwise every subsequent tick while still
+    // unresponded would create a duplicate safety_event and re-escalate the same wellness
+    // check, flooding the safety board with one row per poll interval instead of one real alert.
+    if (openCheck && !openCheck.responded_at && shift.status !== "idle_alert") {
       await escalateWellnessCheck(client, openCheck.id, (openCheck.escalation_level ?? 0) + 1);
       await createSafetyEvent(client, {
         shiftId: shift.shiftId,

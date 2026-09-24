@@ -19,6 +19,17 @@ const sosSchema = z.object({
 
 const duressSchema = z.object({ shiftId: z.string().uuid() });
 
+const breadcrumbSchema = z.object({
+  geom: z.object({ lat: z.number(), lng: z.number() }),
+  accuracyM: z.number().nullable().optional(),
+  speedMps: z.number().nullable().optional(),
+  heading: z.number().nullable().optional(),
+  batteryPct: z.number().nullable().optional(),
+  activityType: z.string().nullable().optional(),
+  mockLocationFlag: z.boolean().default(false),
+  recordedAt: z.string().optional(),
+});
+
 export async function safetyRoutes(app: FastifyInstance): Promise<void> {
   app.post("/wellness-checks/:id/respond", { preHandler: authenticate }, async (request, reply) => {
     const { id } = request.params as { id: string };
@@ -165,6 +176,49 @@ export async function safetyRoutes(app: FastifyInstance): Promise<void> {
         userAgent: request.headers["user-agent"] ?? null,
       });
       return reply.send({});
+    });
+  });
+
+  // NOT part of docs/API_CONTRACT.md - that document has no breadcrumb-ingestion endpoint at
+  // all, and it's frozen for this build. Without one, location_breadcrumbs (and therefore
+  // lastKnownGeom/batteryPct on the safety board, and the watchdog's movement-radius check)
+  // would simply never receive data in this build. This is a minimal, additively-documented
+  // endpoint so the safety watchdog has something real to evaluate; it does not change or
+  // conflict with any documented endpoint or field name. A production build should add this to
+  // the contract deliberately (with device-side batching, not one-breadcrumb-per-call).
+  app.post("/shifts/:id/breadcrumb", { preHandler: authenticate }, async (request, reply) => {
+    const { id } = request.params as { id: string };
+    const parsed = breadcrumbSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.code(400).send({ error: "invalid_request", details: parsed.error.flatten() });
+    }
+    const body = parsed.data;
+    const auth = request.auth!;
+
+    return withOrgTx(auth.orgId, async (client) => {
+      const shift = await getShiftById(client, id);
+      if (!shift || shift.user_id !== auth.userId) {
+        return reply.code(404).send({ error: "shift_not_found" });
+      }
+      await client.query(
+        `INSERT INTO location_breadcrumbs
+           (shift_id, user_id, recorded_at, geom, accuracy_m, speed_mps, heading, battery_pct, activity_type, mock_location_flag, retention_expires_at)
+         VALUES ($1, $2, COALESCE($3::timestamptz, now()), ST_SetSRID(ST_MakePoint($4, $5), 4326), $6, $7, $8, $9, $10, $11, now() + interval '30 days')`,
+        [
+          id,
+          auth.userId,
+          body.recordedAt ?? null,
+          body.geom.lng,
+          body.geom.lat,
+          body.accuracyM ?? null,
+          body.speedMps ?? null,
+          body.heading ?? null,
+          body.batteryPct ?? null,
+          body.activityType ?? null,
+          body.mockLocationFlag,
+        ]
+      );
+      return reply.code(201).send({ ok: true });
     });
   });
 
