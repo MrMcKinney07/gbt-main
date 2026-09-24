@@ -23,8 +23,16 @@ export type OrgTxClient = pg.PoolClient;
  * it can never leak into another request on a pooled connection). This is the shared helper
  * required by the build instructions instead of copy-pasting `SET LOCAL app.org_id` into every
  * route. Every mutating or reading route handler that touches campaign-scoped or org-scoped
- * tables must go through this (or `withSystemTx` for the rare unauthenticated path, e.g. login
- * itself, which looks up a user by email before an org_id is known).
+ * tables must go through this.
+ *
+ * The rare cases that run before an org_id is known (login's lookup-by-email, and the
+ * watchdog's cross-org tick) do NOT use a variant of this helper with RLS left unset - with no
+ * app.org_id set, `org_id = app_current_org_id()` evaluates to `org_id = NULL`, which RLS never
+ * treats as true, so an ordinary transaction on gbt_app would see zero rows, not every org's
+ * rows. Those two call sites instead go through a narrow SECURITY DEFINER database function
+ * (0012_auth_bootstrap_functions.sql, called from lib/authBootstrap.ts and lib/orgList.ts) that
+ * runs with the migrations role's BYPASSRLS privilege for exactly one query each, so this API
+ * process itself never needs superuser credentials at runtime.
  */
 export async function withOrgTx<T>(orgId: string, fn: (client: OrgTxClient) => Promise<T>): Promise<T> {
   const client = await pool.connect();
@@ -42,32 +50,6 @@ export async function withOrgTx<T>(orgId: string, fn: (client: OrgTxClient) => P
       await client.query("ROLLBACK");
     } catch {
       // ignore rollback failure, original error is what matters
-    }
-    throw err;
-  } finally {
-    client.release();
-  }
-}
-
-/**
- * For the small number of code paths that must run before an org_id is known (auth/login looks
- * a user up by email; users has an org_isolation RLS policy too, so login runs its lookup with
- * app.org_id left unset on purpose, which means RLS makes it see rows from every org for that
- * one query). This is intentional and documented at the one call site (auth service) rather than
- * used anywhere else.
- */
-export async function withSystemTx<T>(fn: (client: OrgTxClient) => Promise<T>): Promise<T> {
-  const client = await pool.connect();
-  try {
-    await client.query("BEGIN");
-    const result = await fn(client);
-    await client.query("COMMIT");
-    return result;
-  } catch (err) {
-    try {
-      await client.query("ROLLBACK");
-    } catch {
-      // ignore
     }
     throw err;
   } finally {

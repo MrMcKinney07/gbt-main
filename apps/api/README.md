@@ -113,12 +113,14 @@ This build is honest about what's real vs approximated. Each item below says whi
   policy as everything else — with no `app.org_id` set yet, `gbt_app` sees **zero** rows, not
   "all rows", so there's no way to look up which org an email belongs to via the normal
   org-scoped path. The same problem hits the safety watchdog, which evaluates active shifts
-  across every org on a timer, not inside one request's org context. Both use a second,
-  narrowly-scoped connection as the `gbt` superuser for exactly one query each (resolve
-  `{org_id, password_hash}` by email; list org ids) — see the long comment in
-  `authBootstrap.ts` for the full reasoning and the production fix (a `SECURITY DEFINER` lookup
-  function added via a real migration) that this build can't make because `db/migrations` is
-  frozen for this task.
+  across every org on a timer, not inside one request's org context. **Resolved**: both now call
+  a `SECURITY DEFINER` database function (`auth_lookup_user_for_login`, `list_all_org_ids`,
+  added in `db/migrations/0012_auth_bootstrap_functions.sql`) that runs with the migrations
+  role's `BYPASSRLS` privilege for exactly one narrow query each — the API process itself never
+  holds superuser credentials at runtime. (This build's original pass reached for a second
+  `gbt`-superuser connection pool as a stopgap because `db/migrations` was frozen for the
+  concurrent agent builds; that constraint didn't apply to the integration pass, so the real fix
+  landed instead.)
 - **Contact-attempt idempotency status codes**: `docs/API_CONTRACT.md` doesn't specify different
   status codes for a fresh insert vs. an idempotent replay of `POST /contact-attempts`. This
   build returns `201` for a fresh insert and `200` for a replay (same response body shape
