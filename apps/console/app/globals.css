@@ -1,8 +1,23 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #faf9f6;
+  --foreground: #0e1a2b;
+
+  /* Brand palette — deep navy / crisp white / a restrained flag-red used ONLY as a decorative
+     accent (the tricolor rule under the header, small flourishes) and NEVER on an
+     interactive or status element. It is a distinct hue/weight from --color-safety on
+     purpose (a muted brick vs. an alert crimson) specifically so it can never be mistaken
+     for a safety signal — see the note on --color-safety below and docs/ARCHITECTURE.md.
+     This is the one deliberate exception to "brand chrome stays out of the safety/
+     accountability palette": it is fixed decoration, never a state, never clickable. */
+  --color-brand-navy: #0e2148;
+  --color-brand-navy-deep: #081226;
+  --color-brand-blue: #2a4d8f;
+  --color-brand-cream: #faf9f6;
+  --color-brand-ink: #0e1a2b;
+  --color-brand-accent-red: #8a2432;
+  --color-brand-hairline: #d8d3c7;
 
   /* Reserved monitoring-family colors — see lib/colors.ts and docs/ARCHITECTURE.md.
      SAFETY = red family, ACCOUNTABILITY = violet family. Never reused for anything else,
@@ -23,8 +38,17 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
   --font-mono: var(--font-geist-mono);
+
+  --color-brand-navy: var(--color-brand-navy);
+  --color-brand-navy-deep: var(--color-brand-navy-deep);
+  --color-brand-blue: var(--color-brand-blue);
+  --color-brand-cream: var(--color-brand-cream);
+  --color-brand-ink: var(--color-brand-ink);
+  --color-brand-accent-red: var(--color-brand-accent-red);
+  --color-brand-hairline: var(--color-brand-hairline);
 
   --color-safety: var(--color-safety);
   --color-safety-strong: var(--color-safety-strong);
@@ -42,7 +66,34 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-display), Georgia, "Times New Roman", serif;
+}
+
+/* The tricolor rule: a quiet nod to the palette without ever touching an interactive
+   element's color. Three flat bands, no gradient, no shine — restraint is the "expensive"
+   part. */
+.tricolor-rule {
+  height: 3px;
+  background: linear-gradient(
+    to right,
+    var(--color-brand-navy) 0%,
+    var(--color-brand-navy) 33.3%,
+    var(--color-brand-cream) 33.3%,
+    var(--color-brand-cream) 66.6%,
+    var(--color-brand-accent-red) 66.6%,
+    var(--color-brand-accent-red) 100%
+  );
+}
+
+.card-premium {
+  background: #ffffff;
+  border: 1px solid var(--color-brand-hairline);
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 2px rgba(14, 26, 43, 0.04), 0 8px 24px -12px rgba(14, 26, 43, 0.12);
 }
 
 .maplibregl-popup-content {

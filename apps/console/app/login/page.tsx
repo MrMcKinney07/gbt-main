@@ -54,17 +54,20 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex flex-1 items-center justify-center px-4 py-12">
-      <div className="w-full max-w-sm space-y-8">
+    <div className="flex flex-1 items-center justify-center bg-brand-cream px-4 py-12">
+      <div className="w-full max-w-sm space-y-7">
         <div className="text-center">
-          <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-slate-900 text-white font-semibold">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-brand-navy font-display text-base font-semibold tracking-wide text-white shadow-sm">
             GB
           </div>
-          <h1 className="text-xl font-semibold text-slate-900">Field Console</h1>
-          <p className="mt-1 text-sm text-slate-500">Sign in to manage today&apos;s canvass.</p>
+          <h1 className="font-display text-2xl font-semibold text-brand-ink">
+            Field Console
+          </h1>
+          <p className="mt-1.5 text-sm text-slate-500">Sign in to manage today&apos;s canvass.</p>
+          <div className="tricolor-rule mx-auto mt-5 w-16 rounded-full" />
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        <form onSubmit={handleSubmit} className="card-premium space-y-4 p-7">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-slate-700">
               Email
@@ -76,7 +79,7 @@ export default function LoginPage() {
               autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+              className="mt-1.5 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-brand-ink focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
               placeholder="you@demo.local"
             />
           </div>
@@ -91,7 +94,7 @@ export default function LoginPage() {
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+              className="mt-1.5 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-brand-ink focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
               placeholder="••••••••"
             />
           </div>
@@ -105,13 +108,13 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full rounded-md bg-slate-900 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full rounded-md bg-brand-navy px-3 py-2.5 text-sm font-semibold tracking-wide text-white shadow-sm transition-colors hover:bg-brand-navy-deep disabled:cursor-not-allowed disabled:opacity-60"
           >
             {submitting ? "Signing in…" : "Sign in"}
           </button>
         </form>
 
-        <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4">
+        <div className="rounded-xl border border-dashed border-brand-hairline bg-white/60 p-4">
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
             Demo credentials
           </p>
@@ -125,7 +128,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => fillDemo(acct.email)}
-                  className="shrink-0 rounded border border-slate-300 bg-white px-2 py-0.5 text-xs font-medium text-slate-700 hover:bg-slate-100"
+                  className="shrink-0 rounded border border-slate-300 bg-white px-2 py-0.5 text-xs font-medium text-brand-navy hover:bg-slate-100"
                 >
                   Use
                 </button>

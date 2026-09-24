@@ -5,12 +5,15 @@
  * unmistakable at a glance — see docs/ARCHITECTURE.md.
  */
 export const colors = {
-  bg: '#f8fafc',
+  // Brand palette, matching apps/console (deep navy / cream / hairline borders) — see
+  // apps/console/app/globals.css for the shared reasoning.
+  bg: '#faf9f6',
   surface: '#ffffff',
-  border: '#e2e8f0',
-  text: '#0f172a',
+  border: '#d8d3c7',
+  text: '#0e1a2b',
   textMuted: '#64748b',
-  primary: '#1d4ed8',
+  primary: '#0e2148',
+  primaryDark: '#081226',
   primaryText: '#ffffff',
   danger: '#b91c1c',
 

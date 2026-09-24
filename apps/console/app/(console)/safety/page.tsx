@@ -63,7 +63,7 @@ export default function SafetyPage() {
     <div className="flex flex-1 flex-col gap-3 overflow-hidden p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-lg font-semibold text-slate-900">Safety</h1>
+          <h1 className="font-display text-xl font-semibold text-brand-ink">Safety</h1>
           <p className="mt-0.5 text-sm text-slate-500">
             Agents we have not heard from. Check on them.
           </p>
@@ -78,7 +78,7 @@ export default function SafetyPage() {
       <SafetyBanner />
 
       <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-[1fr_420px]">
-        <div className="flex min-h-0 flex-col overflow-hidden rounded-lg border border-slate-200 bg-white">
+        <div className="flex min-h-0 flex-col overflow-hidden rounded-lg border border-brand-hairline bg-white shadow-[0_1px_2px_rgba(14,26,43,0.04)]">
           <SafetyQueue
             items={data.items}
             resolvedIds={resolvedIds}
@@ -87,7 +87,7 @@ export default function SafetyPage() {
             onResolve={handleResolve}
           />
         </div>
-        <div className="min-h-[320px] overflow-hidden rounded-lg border border-slate-200 bg-white">
+        <div className="min-h-[320px] overflow-hidden rounded-lg border border-brand-hairline bg-white shadow-[0_1px_2px_rgba(14,26,43,0.04)]">
           <SafetyMap items={data.items} selectedId={selectedId} />
         </div>
       </div>

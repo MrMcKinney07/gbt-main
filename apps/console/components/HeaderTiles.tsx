@@ -13,20 +13,24 @@ function Tile({ label, value, accent }: TileProps) {
       ? "border-safety-border bg-safety-soft"
       : accent === "accountability"
       ? "border-accountability-border bg-accountability-soft"
-      : "border-slate-200 bg-white";
+      : "border-brand-hairline bg-white";
   const valueClasses =
     accent === "safety"
       ? "text-safety-text"
       : accent === "accountability"
       ? "text-accountability-text"
-      : "text-slate-900";
+      : "text-brand-ink";
 
   return (
-    <div className={`flex min-w-0 flex-col justify-between rounded-lg border px-4 py-3 ${accentClasses}`}>
-      <span className="truncate text-[11px] font-medium uppercase tracking-wide text-slate-500">
+    <div
+      className={`flex min-w-0 flex-col justify-between rounded-lg border px-4 py-3.5 shadow-[0_1px_2px_rgba(14,26,43,0.04)] ${accentClasses}`}
+    >
+      <span className="truncate text-[11px] font-medium uppercase tracking-wider text-slate-500">
         {label}
       </span>
-      <span className={`mt-1 text-xl font-semibold tabular-nums ${valueClasses}`}>{value}</span>
+      <span className={`mt-1.5 font-display text-2xl font-semibold tabular-nums ${valueClasses}`}>
+        {value}
+      </span>
     </div>
   );
 }

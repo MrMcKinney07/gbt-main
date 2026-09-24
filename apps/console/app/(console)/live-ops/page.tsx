@@ -39,7 +39,7 @@ export default function LiveOpsPage() {
   return (
     <div className="flex flex-1 flex-col gap-3 overflow-hidden p-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-slate-900">Live Operations</h1>
+        <h1 className="font-display text-xl font-semibold text-brand-ink">Live Operations</h1>
         {isMock && (
           <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-800">
             Demo data — {error ?? "API unreachable"}
@@ -51,7 +51,7 @@ export default function LiveOpsPage() {
 
       <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-[1fr_320px]">
         <div className="flex min-h-0 flex-col gap-3">
-          <div className="min-h-[280px] flex-[3] overflow-hidden rounded-lg border border-slate-200 bg-white">
+          <div className="min-h-[280px] flex-[3] overflow-hidden rounded-lg border border-brand-hairline bg-white shadow-[0_1px_2px_rgba(14,26,43,0.04)]">
             <LiveOpsMap
               roster={data.roster}
               safetyAlerts={data.safetyAlerts}
@@ -59,7 +59,7 @@ export default function LiveOpsPage() {
               onSelectAgent={setSelectedUserId}
             />
           </div>
-          <div className="min-h-[220px] flex-[2] overflow-hidden rounded-lg border border-slate-200 bg-white">
+          <div className="min-h-[220px] flex-[2] overflow-hidden rounded-lg border border-brand-hairline bg-white shadow-[0_1px_2px_rgba(14,26,43,0.04)]">
             <RosterTable
               roster={data.roster}
               safetyAlerts={data.safetyAlerts}
@@ -69,7 +69,7 @@ export default function LiveOpsPage() {
           </div>
         </div>
 
-        <div className="min-h-0 overflow-hidden rounded-lg border border-slate-200 bg-white">
+        <div className="min-h-0 overflow-hidden rounded-lg border border-brand-hairline bg-white shadow-[0_1px_2px_rgba(14,26,43,0.04)]">
           <AlertRail safetyAlerts={data.safetyAlerts} accountabilityAlerts={data.accountabilityAlerts} />
         </div>
       </div>
