@@ -6,9 +6,12 @@ import { ConsentScreen } from './ConsentScreen';
 import { ApiError } from '../../api/client';
 import { colors, spacing } from '../../ui/theme';
 
-// Demo fixed IDs from docs/API_CONTRACT.md's db/seed.sql section.
+// Demo fixed IDs from db/seed.sql (also listed in docs/API_CONTRACT.md). Both must be real
+// UUIDs matching seeded rows -- POST /shifts/start validates campaignId and deviceId with
+// z.string().uuid(), and deviceId must reference an existing devices row for the consent/
+// license checks in apps/api/src/routes/shifts.ts to resolve correctly.
 const DEMO_CAMPAIGN_ID = '00000000-0000-0000-0000-000000000002';
-const DEMO_DEVICE_ID = 'demo-device-001';
+const DEMO_DEVICE_ID = '00000000-0000-0000-0000-000000000030';
 
 interface Props {
   onShiftStarted: (shift: { id: string; photoIntervalProfileId: string }) => void;

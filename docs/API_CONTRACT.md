@@ -28,6 +28,14 @@ Demo fixed IDs (from `db/seed.sql`):
 
 `POST /shifts/start` `{campaignId, deviceId, consentRecordIds: string[]}` ->
 `201 {id, actualStart, photoIntervalProfileId}` or `403 {error: "consent_missing", missing: [...]}` or `403 {error: "license_missing", state}`.
+`deviceId` and every entry in `consentRecordIds` must be real UUIDs matching existing
+`devices` / `consent_records` rows (the API validates with `z.string().uuid()` and 400s
+otherwise) — **there is no endpoint in this contract for a client to obtain them.** The demo
+mobile app hardcodes the seeded demo ids (`db/seed.sql`) as a stand-in; a real build needs
+either `GET /consent-records?userId=` (look up existing grants) or `POST /consent-records`
+(record a fresh grant at the moment the consent screen is accepted). This gap was found by
+actually driving the mobile app against a live API — see `apps/mobile/README.md` "Web
+preview" — not by either side's own isolated tests.
 
 `POST /shifts/:id/end` -> `200 {id, actualEnd}`.
 

@@ -8,9 +8,23 @@ import { colors, spacing } from '../../ui/theme';
  * review and must get one before use on a real canvass. It is real, specific copy, not
  * lorem ipsum, because the acceptance gate below is meant to be affirmative and informed.
  */
-const CONSENT_ITEMS: { id: string; heading: string; body: string }[] = [
+// `consentRecordId` maps a checklist item to a real, pre-existing `consent_records` row
+// (db/seed.sql) so the API's POST /shifts/start can actually verify it -- the route requires
+// `z.string().uuid()` entries that resolve to a `consent_type` the consent-gate checks
+// (currently just `location_tracking`; see apps/api/src/repositories/core.ts
+// hasLocationTrackingConsent). Two of the four checklist items ("contact_data", "retention")
+// are informational disclosure only and have no corresponding `consent_type` in this build's
+// schema, so they're shown and must still be checked, but contribute no id to the request.
+//
+// This whole mapping is a stand-in for a real consent-issuance flow, which doesn't exist yet:
+// there is no POST /consent-records (record a fresh grant) or GET /consent-records (look up
+// this user's existing grants) in docs/API_CONTRACT.md. A production build needs one of
+// those -- hardcoding the demo's known consent_record ids here is only valid against
+// db/seed.sql's fixed UUIDs.
+const CONSENT_ITEMS: { id: string; heading: string; body: string; consentRecordId?: string }[] = [
   {
     id: 'location',
+    consentRecordId: '00000000-0000-0000-0000-000000000040',
     heading: 'Location',
     body:
       'While your shift is active, this app records your approximate location roughly every ' +
@@ -21,6 +35,7 @@ const CONSENT_ITEMS: { id: string; heading: string; body: string }[] = [
   },
   {
     id: 'photos',
+    consentRecordId: '00000000-0000-0000-0000-000000000041',
     heading: 'Photo verification',
     body:
       'A few times per shift, at moments this app chooses at random, you’ll be asked to take ' +
@@ -87,7 +102,13 @@ export function ConsentScreen({ onAccept, onCancel }: Props) {
         <TouchableOpacity
           style={[styles.acceptButton, !allChecked && styles.acceptButtonDisabled]}
           disabled={!allChecked}
-          onPress={() => onAccept(CONSENT_ITEMS.map((i) => i.id))}
+          onPress={() =>
+            onAccept(
+              CONSENT_ITEMS.map((i) => i.consentRecordId).filter(
+                (id): id is string => id !== undefined
+              )
+            )
+          }
           testID="consent-accept"
         >
           <Text style={styles.acceptText}>I understand — start shift</Text>

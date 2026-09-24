@@ -26,20 +26,45 @@ npx expo start
 
 then press `a`/`i`/`w`, or scan the QR code with Expo Go, on a real device/simulator.
 
-**This session could not run that** — there is no Android/iOS device, emulator, or simulator
-available in this sandbox. What was verified here instead:
+**No Android/iOS device, emulator, or simulator is available in this sandbox**, so the app
+has never been run as an actual mobile build. What was verified at build time instead:
 
 - `npx tsc --noEmit` — clean (see below).
 - `npx jest` — 21/21 tests passing (see below).
 - `npx expo export --platform android` — Metro successfully bundled the entire app
   (667 modules, no errors), which proves the whole import graph resolves and every file
-  parses/transpiles correctly. This is the strongest signal available in this environment
-  short of actually booting the app on a device.
+  parses/transpiles correctly.
 
-The API the app talks to (`http://localhost:3001`, per `docs/API_CONTRACT.md`) was also not
-reachable from this session (it's being built concurrently by another agent). That's
-expected and fine: this app is offline-first by design, and every screen and test below was
-built and verified without the API needing to be up — see "Offline-first architecture".
+### Web preview (added in a later integration pass, demo-only)
+
+`npx expo install react-dom react-native-web && npx expo start --web` now works, driven by
+`metro.config.js` (registers `.wasm` as an asset extension and sets the COOP/COEP headers
+`expo-sqlite`'s web build needs — this is Expo's own documented fix, not app-specific). This
+was added specifically to let a real login → consent → shift start → door-screen →
+wellness-prompt flow be driven end to end with a headless browser against the live API and
+a live Postgres instance, rather than trusting each layer's own isolated tests. **It is a
+demo aid, not a target platform** — camera capture, real GPS, and background location on web
+behave differently (or not at all) versus native, and this is not how the app would ship.
+
+That end-to-end run caught two real integration bugs neither this app's own test suite nor
+the API's could have caught in isolation, since nothing before this exercised them together:
+
+1. `ShiftStartScreen`'s `DEMO_DEVICE_ID` was the string `"demo-device-001"`, but
+   `POST /shifts/start` validates `deviceId` with `z.string().uuid()` — every shift-start
+   request failed with `invalid_request`. Fixed to the real seeded device id
+   (`00000000-0000-0000-0000-000000000030`, `db/seed.sql`).
+2. `ConsentScreen`'s four checklist items had no relationship to any real `consent_records`
+   row — it sent its own local item ids (`"location"`, `"photos"`, ...) as `consentRecordIds`,
+   which likewise fail the API's UUID validation. Fixed by mapping the two items that
+   correspond to a real `consent_type` (`location`, `photos`) to their seeded
+   `consent_records` UUIDs; see the comment above `CONSENT_ITEMS` in `ConsentScreen.tsx` for
+   why this is a stand-in for a real consent-issuance endpoint that doesn't exist yet in
+   `docs/API_CONTRACT.md`.
+
+The API the app talks to (`http://localhost:3001`, per `docs/API_CONTRACT.md`) was not
+reachable during the original build (built concurrently by another agent). That's fine by
+design — this app is offline-first, and every screen and test below was built and verified
+without the API needing to be up — see "Offline-first architecture".
 
 ## Tests
 
