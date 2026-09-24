@@ -105,7 +105,13 @@ export function DoorScreen({ shiftId, onVerificationDue, onOpenDebug }: Props) {
   }, [db]);
 
   function goNext() {
-    setIndex((i) => Math.min(i + 1, Math.max(addresses.length - 1, 0)));
+    // Deliberately allowed to go one past the last valid index: `current` (addresses[index])
+    // then resolves to undefined -> null, which is what shows the "No more doors in this
+    // walkbook" completion state below. Clamping to addresses.length - 1 (the previous
+    // version) meant that state was unreachable from the last door -- tapping "Next door"
+    // silently re-showed the same last door forever with no indication the walkbook was
+    // done. Found by actually finishing a demo walkbook end to end.
+    setIndex((i) => Math.min(i + 1, addresses.length));
   }
 
   if (!current) {
