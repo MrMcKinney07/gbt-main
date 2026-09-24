@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
+  ImageBackground,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -13,7 +15,8 @@ import { useAppContext } from '../../state/AppContext';
 import { ApiError } from '../../api/client';
 import type { AuthUser } from '../../api/types';
 import { colors, spacing } from '../../ui/theme';
-import { EagleMark } from '../../ui/EagleMark';
+import { FlyingEagle } from '../../ui/FlyingEagle';
+import { RibbonBanner } from '../../ui/RibbonBanner';
 
 interface Props {
   onLoggedIn: (user: AuthUser, accessToken: string) => void;
@@ -48,67 +51,122 @@ export function LoginScreen({ onLoggedIn }: Props) {
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    // Bald eagle photo credit: assets/brand/CREDIT.md (USFWS, public domain, Todd Harless
+    // 2006) — same asset as apps/console's login page, kept in sync by hand.
+    <ImageBackground
+      source={require('../../../assets/brand/bald-eagle.jpg')}
+      style={styles.background}
+      resizeMode="cover"
+      imageStyle={styles.backgroundImage}
     >
-      <View style={styles.badge}>
-        <EagleMark size={44} color={colors.primaryText} />
-      </View>
-      <Text style={styles.title}>Canvasser sign in</Text>
-      <Text style={styles.subtitle}>Demo credentials are pre-filled.</Text>
-
-      <Text style={styles.label}>Email</Text>
-      <TextInput
-        style={styles.input}
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-        testID="login-email"
-      />
-
-      <Text style={styles.label}>Password</Text>
-      <TextInput
-        style={styles.input}
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        testID="login-password"
-      />
-
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-
-      <TouchableOpacity
-        style={[styles.button, submitting && styles.buttonDisabled]}
-        onPress={handleSubmit}
-        disabled={submitting}
-        testID="login-submit"
+      <View style={styles.scrim} />
+      <FlyingEagle top={70} />
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        {submitting ? (
-          <ActivityIndicator color={colors.primaryText} />
-        ) : (
-          <Text style={styles.buttonText}>Sign in</Text>
-        )}
-      </TouchableOpacity>
-    </KeyboardAvoidingView>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.ribbonWrap}>
+            <RibbonBanner label="Field Operations" width={200} />
+          </View>
+          <Text style={styles.title}>Canvasser sign in</Text>
+          <Text style={styles.subtitle}>Demo credentials are pre-filled.</Text>
+          <View style={styles.tricolorRule} />
+
+          <View style={styles.card}>
+            <Text style={styles.label}>Email</Text>
+            <TextInput
+              style={styles.input}
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              testID="login-email"
+            />
+
+            <Text style={styles.label}>Password</Text>
+            <TextInput
+              style={styles.input}
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              testID="login-password"
+            />
+
+            {error ? <Text style={styles.error}>{error}</Text> : null}
+
+            <TouchableOpacity
+              style={[styles.button, submitting && styles.buttonDisabled]}
+              onPress={handleSubmit}
+              disabled={submitting}
+              testID="login-submit"
+            >
+              {submitting ? (
+                <ActivityIndicator color={colors.primaryText} />
+              ) : (
+                <Text style={styles.buttonText}>Sign in</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg, padding: spacing.lg, justifyContent: 'center' },
-  badge: {
-    alignSelf: 'center',
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.md,
+  background: { flex: 1 },
+  backgroundImage: { opacity: 0.9 },
+  // Flat navy scrim rather than a gradient (no expo-linear-gradient dependency for one
+  // screen) — still leaves the eagle's white head/tail and blue sky clearly visible while
+  // keeping the form legible over it.
+  scrim: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: 'rgba(8, 18, 38, 0.55)',
   },
-  title: { fontSize: 26, fontWeight: '700', color: colors.text, marginBottom: spacing.xs, textAlign: 'center' },
-  subtitle: { fontSize: 14, color: colors.textMuted, marginBottom: spacing.lg, textAlign: 'center' },
+  container: { flex: 1 },
+  scrollContent: { flexGrow: 1, justifyContent: 'flex-end', padding: spacing.lg, paddingBottom: spacing.xl },
+  ribbonWrap: { alignItems: 'center', marginBottom: spacing.sm },
+  title: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#ffffff',
+    textAlign: 'center',
+    textShadowColor: 'rgba(0,0,0,0.5)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.85)',
+    textAlign: 'center',
+    marginTop: spacing.xs,
+  },
+  tricolorRule: {
+    height: 3,
+    width: 64,
+    alignSelf: 'center',
+    marginTop: spacing.md,
+    marginBottom: spacing.lg,
+    borderRadius: 2,
+    overflow: 'hidden',
+    backgroundColor: colors.primary,
+  },
+  card: {
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    padding: spacing.lg,
+    borderTopWidth: 4,
+    borderTopColor: '#8a2432',
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 8,
+  },
   label: { fontSize: 13, color: colors.textMuted, marginBottom: spacing.xs, marginTop: spacing.sm },
   input: {
     backgroundColor: colors.surface,

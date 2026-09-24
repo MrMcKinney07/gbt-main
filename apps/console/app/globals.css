@@ -96,6 +96,77 @@ h1, h2, h3, .font-display {
   box-shadow: 0 1px 2px rgba(14, 26, 43, 0.04), 0 8px 24px -12px rgba(14, 26, 43, 0.12);
 }
 
+/* Scattered five-point stars on a dark field, CSS-only (no image request). A small tile
+   repeated across the login page's navy background — echoes a flag's canton without
+   drawing one literally. Kept low-opacity so it reads as texture, not clutter. */
+.stars-field {
+  background-image:
+    radial-gradient(1.5px 1.5px at 10% 20%, rgba(255,255,255,0.5) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 70% 60%, rgba(255,255,255,0.4) 50%, transparent 51%),
+    radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,0.45) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 85% 15%, rgba(255,255,255,0.35) 50%, transparent 51%),
+    radial-gradient(1px 1px at 25% 50%, rgba(255,255,255,0.4) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 55% 30%, rgba(255,255,255,0.3) 50%, transparent 51%),
+    radial-gradient(1px 1px at 90% 75%, rgba(255,255,255,0.4) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 15% 90%, rgba(255,255,255,0.35) 50%, transparent 51%);
+  background-size: 220px 220px;
+}
+
+/* Eagle flying across the login page: left off-screen to right off-screen, with a gentle
+   vertical bob so it reads as gliding rather than sliding on rails. Loops continuously with
+   a pause at each end. Respects reduced-motion. */
+@keyframes fly-across {
+  0% { transform: translate(-20vw, 0) scale(1) rotate(-2deg); opacity: 0; }
+  6% { opacity: 1; }
+  25% { transform: translate(30vw, -18px) scale(1.05) rotate(1deg); }
+  50% { transform: translate(70vw, 6px) scale(1) rotate(-1deg); }
+  75% { transform: translate(105vw, -10px) scale(0.97) rotate(2deg); }
+  94% { opacity: 1; }
+  100% { transform: translate(130vw, 0) scale(0.95) rotate(-2deg); opacity: 0; }
+}
+.flying-eagle {
+  animation: fly-across 16s ease-in-out infinite;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.45));
+}
+@media (prefers-reduced-motion: reduce) {
+  .flying-eagle {
+    animation: none;
+    left: 8%;
+    opacity: 0.9;
+  }
+}
+
+/* Ribbon banner: a folded double-pointed ribbon in flat navy/white/red bands — the one
+   place on the page allowed to show all three colors as literal stripes (everywhere else
+   red stays reserved for accents/safety per docs/ARCHITECTURE.md; this is a static
+   decorative banner shape, never an interactive or status element). */
+.ribbon-banner {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 2.25rem;
+  clip-path: polygon(0% 50%, 9% 0%, 91% 0%, 100% 50%, 91% 100%, 9% 100%);
+  background: linear-gradient(
+    to bottom,
+    var(--color-brand-navy) 0%,
+    var(--color-brand-navy) 33%,
+    #ffffff 33%,
+    #ffffff 67%,
+    var(--color-brand-accent-red) 67%,
+    var(--color-brand-accent-red) 100%
+  );
+  box-shadow: 0 6px 16px -4px rgba(0, 0, 0, 0.5);
+}
+.ribbon-banner__text {
+  color: var(--color-brand-navy);
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.001); /* keeps text crisp over the middle white band */
+}
+
 .maplibregl-popup-content {
   padding: 0 !important;
   border-radius: 0.5rem !important;
