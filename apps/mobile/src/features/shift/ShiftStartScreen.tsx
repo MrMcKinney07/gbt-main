@@ -6,6 +6,7 @@ import { ConsentScreen } from './ConsentScreen';
 import { ApiError } from '../../api/client';
 import { colors, spacing } from '../../ui/theme';
 import { DEMO_CAMPAIGN_ID, DEMO_DEVICE_ID } from '../../config/demoIds';
+import { RibbonBanner } from '../../ui/RibbonBanner';
 
 interface Props {
   onShiftStarted: (shift: { id: string; photoIntervalProfileId: string }) => void;
@@ -59,38 +60,62 @@ export function ShiftStartScreen({ onShiftStarted }: Props) {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Today's walkbook</Text>
-      {walkbook ? (
-        <View style={styles.card}>
-          <Text style={styles.walkbookName}>{walkbook.name}</Text>
-          {walkbook.turfName ? <Text style={styles.turfName}>{walkbook.turfName}</Text> : null}
-          <Text style={styles.doorCount}>{walkbook.doorCount} doors assigned</Text>
-        </View>
-      ) : (
-        <Text style={styles.textMuted}>No walkbook synced locally yet.</Text>
-      )}
+    <View style={styles.screen}>
+      {/* Header, set off from the page body by the same red/white/blue ribbon used on the
+          login screen -- a banner divider rather than a plain border line. */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Field Console</Text>
+      </View>
+      <View style={styles.ribbonDivider}>
+        <RibbonBanner label="Field Operations" width={180} />
+      </View>
 
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-
-      <TouchableOpacity
-        style={[styles.button, starting && styles.buttonDisabled]}
-        disabled={starting}
-        onPress={() => setShowConsent(true)}
-        testID="shift-start-button"
-      >
-        {starting ? (
-          <ActivityIndicator color={colors.primaryText} />
+      <View style={styles.container}>
+        <Text style={styles.title}>Today's walkbook</Text>
+        {walkbook ? (
+          <View style={styles.card}>
+            <Text style={styles.walkbookName}>{walkbook.name}</Text>
+            {walkbook.turfName ? <Text style={styles.turfName}>{walkbook.turfName}</Text> : null}
+            <Text style={styles.doorCount}>{walkbook.doorCount} doors assigned</Text>
+          </View>
         ) : (
-          <Text style={styles.buttonText}>Start shift</Text>
+          <Text style={styles.textMuted}>No walkbook synced locally yet.</Text>
         )}
-      </TouchableOpacity>
+
+        {error ? <Text style={styles.error}>{error}</Text> : null}
+
+        <TouchableOpacity
+          style={[styles.button, starting && styles.buttonDisabled]}
+          disabled={starting}
+          onPress={() => setShowConsent(true)}
+          testID="shift-start-button"
+        >
+          {starting ? (
+            <ActivityIndicator color={colors.primaryText} />
+          ) : (
+            <Text style={styles.buttonText}>Start shift</Text>
+          )}
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg, padding: spacing.lg, justifyContent: 'center' },
+  screen: { flex: 1, backgroundColor: colors.bg },
+  header: {
+    backgroundColor: colors.primary,
+    paddingTop: 56,
+    paddingBottom: spacing.md,
+    alignItems: 'center',
+  },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: colors.primaryText, letterSpacing: 0.5 },
+  ribbonDivider: {
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+    paddingBottom: spacing.sm,
+  },
+  container: { flex: 1, padding: spacing.lg, justifyContent: 'center' },
   title: { fontSize: 22, fontWeight: '700', color: colors.text, marginBottom: spacing.md },
   card: {
     backgroundColor: colors.surface,

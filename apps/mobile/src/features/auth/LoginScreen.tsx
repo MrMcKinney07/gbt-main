@@ -55,6 +55,13 @@ export function LoginScreen({ onLoggedIn }: Props) {
       {/* The animated icon still sweeps across the whole screen (see FlyingEagle). Photo
           credit: assets/brand/CREDIT.md (USFWS, public domain). */}
       <FlyingEagle top={56} />
+
+      {/* Ribbon pinned at the very top of the screen, outside the centered scroll content
+          below -- not just first-in-flow, but visually anchored to the top edge. */}
+      <View style={styles.topRibbonWrap}>
+        <RibbonBanner label="Field Operations" width={200} />
+      </View>
+
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -67,17 +74,13 @@ export function LoginScreen({ onLoggedIn }: Props) {
               boxed photo panel -- a previous version gave this its own bordered, near-full-
               width rectangle sized to the photo's aspect ratio, which took up far more of
               the screen than a login page needs. resizeMode="contain" shows the whole bird
-              at a modest, fixed height with no cropping and no box around it. Placed above
-              the ribbon/title so it reads first. */}
+              at a modest, fixed height with no cropping and no box around it. */}
           <Image
             source={require('../../../assets/brand/bald-eagle-cutout.png')}
             style={styles.eagleImage}
             resizeMode="contain"
           />
 
-          <View style={styles.ribbonWrap}>
-            <RibbonBanner label="Field Operations" width={200} />
-          </View>
           <Text style={styles.title}>Canvasser sign in</Text>
           <Text style={styles.subtitle}>Demo credentials are pre-filled.</Text>
           <View style={styles.tricolorRule} />
@@ -127,7 +130,12 @@ const styles = StyleSheet.create({
   background: { flex: 1, backgroundColor: colors.primary },
   container: { flex: 1 },
   scrollContent: { flexGrow: 1, justifyContent: 'center', padding: spacing.lg, paddingVertical: spacing.xl },
-  ribbonWrap: { alignItems: 'center', marginBottom: spacing.sm },
+  topRibbonWrap: {
+    alignItems: 'center',
+    paddingTop: Platform.OS === 'ios' ? 56 : 28,
+    paddingBottom: spacing.sm,
+    zIndex: 10,
+  },
   title: {
     fontSize: 28,
     fontWeight: '700',
