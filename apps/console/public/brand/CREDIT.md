@@ -9,8 +9,10 @@ chroma-key + spill suppression + connected-component cleanup, done locally; scri
 checked in), leaving a transparent-background PNG of just the eagle. Same public-domain
 source and license as above; the transparency doesn't change that.
 
-bald-eagle-perched-cutout.png — Bald eagle perched on a branch, alert posture, looking
-left. Photographer: Bill Wallen, October 2020. Source: https://www.fws.gov/media/bald-eagle-branch
+bald-eagle-perched-cutout.png — Bald eagle perched on a branch, alert posture. Original
+photo looks left; mirrored horizontally so the eagle faces away from the login form (out
+toward the right edge of the page) rather than in toward it, since it sits in the top-right
+corner. Photographer: Bill Wallen, October 2020. Source: https://www.fws.gov/media/bald-eagle-branch
 Public domain (U.S. government work) — no copyright restrictions, no attribution legally
 required, credited here anyway as good practice. Background removed locally (edge-detection
 flood fill from the image border rather than a color threshold, since this photo's sky
