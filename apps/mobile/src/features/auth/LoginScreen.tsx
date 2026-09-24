@@ -13,6 +13,7 @@ import { useAppContext } from '../../state/AppContext';
 import { ApiError } from '../../api/client';
 import type { AuthUser } from '../../api/types';
 import { colors, spacing } from '../../ui/theme';
+import { EagleMark } from '../../ui/EagleMark';
 
 interface Props {
   onLoggedIn: (user: AuthUser, accessToken: string) => void;
@@ -51,6 +52,9 @@ export function LoginScreen({ onLoggedIn }: Props) {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
+      <View style={styles.badge}>
+        <EagleMark size={44} color={colors.primaryText} />
+      </View>
       <Text style={styles.title}>Canvasser sign in</Text>
       <Text style={styles.subtitle}>Demo credentials are pre-filled.</Text>
 
@@ -93,8 +97,18 @@ export function LoginScreen({ onLoggedIn }: Props) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg, padding: spacing.lg, justifyContent: 'center' },
-  title: { fontSize: 26, fontWeight: '700', color: colors.text, marginBottom: spacing.xs },
-  subtitle: { fontSize: 14, color: colors.textMuted, marginBottom: spacing.lg },
+  badge: {
+    alignSelf: 'center',
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.md,
+  },
+  title: { fontSize: 26, fontWeight: '700', color: colors.text, marginBottom: spacing.xs, textAlign: 'center' },
+  subtitle: { fontSize: 14, color: colors.textMuted, marginBottom: spacing.lg, textAlign: 'center' },
   label: { fontSize: 13, color: colors.textMuted, marginBottom: spacing.xs, marginTop: spacing.sm },
   input: {
     backgroundColor: colors.surface,

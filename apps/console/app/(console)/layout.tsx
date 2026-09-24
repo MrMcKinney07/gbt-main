@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
+import { EagleMark } from "@/components/brand/EagleMark";
 
 const NAV = [
   { href: "/live-ops", label: "Live Ops" },
@@ -39,8 +40,8 @@ export default function ConsoleLayout({ children }: { children: React.ReactNode 
       <header className="flex items-center justify-between bg-brand-navy px-6 py-3.5 text-white shadow-sm">
         <div className="flex items-center gap-8">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md border border-white/15 bg-white/10 font-display text-sm font-semibold tracking-wide text-white">
-              GB
+            <div className="flex h-8 w-8 items-center justify-center rounded-md border border-white/15 bg-white/10">
+              <EagleMark className="h-6 w-6" fill="white" />
             </div>
             <span className="font-display text-base font-semibold tracking-wide text-white">
               Field Console

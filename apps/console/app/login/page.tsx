@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth, ApiError } from "@/lib/auth-context";
+import { EagleMark } from "@/components/brand/EagleMark";
 
 const DEMO_ACCOUNTS = [
   { label: "Field director", email: "director@demo.local", role: "field_director" },
@@ -57,8 +58,8 @@ export default function LoginPage() {
     <div className="flex flex-1 items-center justify-center bg-brand-cream px-4 py-12">
       <div className="w-full max-w-sm space-y-7">
         <div className="text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-brand-navy font-display text-base font-semibold tracking-wide text-white shadow-sm">
-            GB
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-navy shadow-sm">
+            <EagleMark className="h-10 w-10" fill="white" />
           </div>
           <h1 className="font-display text-2xl font-semibold text-brand-ink">
             Field Console
