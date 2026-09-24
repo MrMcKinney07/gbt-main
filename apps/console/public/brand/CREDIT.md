@@ -17,4 +17,7 @@ Public domain (U.S. government work) — no copyright restrictions, no attributi
 required, credited here anyway as good practice. Background removed locally (edge-detection
 flood fill from the image border rather than a color threshold, since this photo's sky
 gradient runs from blue at the top to near-white haze at the bottom; script not checked
-in), leaving a transparent-background PNG of the eagle and the branch it's gripping.
+in), leaving a transparent-background PNG of the eagle and the branch it's gripping. The
+dense fine texture of the head plumage needed a morphological closing pass on the edge
+map before the flood fill, or the fill found thin gaps between adjacent feather edges and
+leaked all the way through the head, hollowing most of it out.
