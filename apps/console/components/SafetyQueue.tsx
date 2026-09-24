@@ -6,6 +6,21 @@ import SafetyRowActions from "./SafetyRowActions";
 
 const severityRank: Record<string, number> = { critical: 4, high: 3, medium: 2, low: 1 };
 
+// wellness_checks.escalation_level is a plain integer rung counter from the API (0 = not yet
+// escalated, per the ladder in build-prompt section 8.3). Labeled here rather than in the API
+// response so the API stays the numeric source of truth and this is the one place a copy
+// change happens.
+const ESCALATION_LABELS = [
+  "Not escalated",
+  "Wellness prompt sent",
+  "Team lead notified",
+  "Field director notified",
+  "Emergency contact notified",
+];
+function formatEscalationLevel(level: number): string {
+  return ESCALATION_LABELS[level] ?? `Escalated (level ${level})`;
+}
+
 function watchdogBadgeClasses(status: string) {
   switch (status) {
     case "sos":
@@ -129,7 +144,7 @@ export default function SafetyQueue({
                   </div>
                   <div>
                     <dt className="text-slate-400">Escalation level</dt>
-                    <dd className="capitalize">{item.escalationLevel.replace(/_/g, " ")}</dd>
+                    <dd>{formatEscalationLevel(item.escalationLevel)}</dd>
                   </div>
                 </dl>
 

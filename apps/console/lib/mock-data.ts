@@ -150,7 +150,7 @@ export const mockSafetyAlerts: SafetyBoardItem[] = [
     lastDoorAt: minutesAgoIso(70),
     batteryPct: 9,
     turfName: "Sun Ray Estates A",
-    escalationLevel: "team_lead_notified",
+    escalationLevel: 2,
     severity: "high",
   },
 ];
@@ -200,7 +200,7 @@ export const mockSafetyBoard: SafetyBoardResponse = {
       lastDoorAt: minutesAgoIso(45),
       batteryPct: 62,
       turfName: "Sun Ray Estates A",
-      escalationLevel: "nudge_sent",
+      escalationLevel: 1,
       severity: "medium",
     },
     {
@@ -217,7 +217,7 @@ export const mockSafetyBoard: SafetyBoardResponse = {
       lastDoorAt: minutesAgoIso(16),
       batteryPct: 44,
       turfName: "Sun Ray Estates A",
-      escalationLevel: "none",
+      escalationLevel: 0,
       severity: "low",
     },
   ],

@@ -64,14 +64,13 @@ export interface LatLng {
 }
 
 export type WatchdogStatus = "normal" | "warning" | "dark" | "sos" | string;
-export type EscalationLevel =
-  | "none"
-  | "nudge_sent"
-  | "wellness_check_sent"
-  | "team_lead_notified"
-  | "director_notified"
-  | "emergency_contacted"
-  | string;
+// The API's wellness_checks.escalation_level is a plain integer rung counter (0 = not yet
+// escalated, 1 = wellness prompt sent, 2+ = further rungs of the ladder in section 8.3) — see
+// apps/api/src/repositories/safety.ts. This used to be typed as a semantic string enum here,
+// which crashed the Safety board the first time it rendered a real (non-mock) item
+// (`item.escalationLevel.replace is not a function`). formatEscalationLevel() in
+// components/SafetyQueue.tsx turns the number into a human label for display.
+export type EscalationLevel = number;
 
 export interface SafetyBoardItem {
   id: string;
