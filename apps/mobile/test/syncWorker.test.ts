@@ -6,11 +6,19 @@ import type { ContactAttemptPayload } from '../src/api/types';
 
 function contactPayload(overrides: Partial<ContactAttemptPayload> & { idempotencyKey: string }): ContactAttemptPayload {
   return {
+    id: 'contact-1',
+    campaignId: 'campaign-1',
+    assignmentId: 'assignment-1',
+    walkbookId: 'walkbook-1',
+    turfId: 'turf-1',
     addressId: 'addr-1',
+    householdId: 'household-1',
+    deviceId: 'device-1',
     shiftId: 'shift-1',
     arriveAt: '2026-01-01T00:00:00.000Z',
     arriveGeom: { lat: 0, lng: 0 },
     arriveAccuracyM: 5,
+    recordedAt: '2026-01-01T00:00:00.000Z',
     resultCode: 'not_home',
     ...overrides,
   };

@@ -82,12 +82,36 @@ VALUES (
   'l2', 'DEMO-L2-0001', 'Maria', 'Gonzalez', 41, 'DEM', '{"2024G":"Y","2022G":"N"}'
 );
 
+-- A second real door in the demo walkbook, matching apps/mobile's demo content (previously
+-- that app invented its own fictional "142/144 Elm St" addresses with non-UUID ids that had
+-- no matching row here at all -- every contact-attempt it ever logged silently failed the
+-- API's foreign-key/UUID validation. See apps/mobile/README.md "Web preview" and
+-- docs/API_CONTRACT.md's "Demo fixed IDs" for the fix.
+INSERT INTO addresses (id, campaign_id, org_id, street_number, street_name, street_type, unit_designator, city, state, zip5, geom)
+VALUES (
+  '00000000-0000-0000-0000-0000000000c0',
+  '00000000-0000-0000-0000-000000000002',
+  '00000000-0000-0000-0000-000000000001',
+  '414', 'Oak', 'St', 'Apt 2', 'Sacramento', 'CA', '95814',
+  ST_SetSRID(ST_MakePoint(-121.4899, 38.5786), 4326)
+);
+
+INSERT INTO households (id, address_id) VALUES ('00000000-0000-0000-0000-0000000000c1', '00000000-0000-0000-0000-0000000000c0');
+
+INSERT INTO voters (id, household_id, address_id, provider, provider_voter_id, first_name, last_name, age, party_registration, vote_history)
+VALUES (
+  '00000000-0000-0000-0000-0000000000c2',
+  '00000000-0000-0000-0000-0000000000c1',
+  '00000000-0000-0000-0000-0000000000c0',
+  'l2', 'DEMO-L2-0002', 'Sofia', 'Alvarez', 34, 'IND', '{"2024G":"Y","2022G":"Y"}'
+);
+
 INSERT INTO walkbooks (id, turf_id, campaign_id, version, door_order)
 VALUES (
   '00000000-0000-0000-0000-0000000000a0',
   '00000000-0000-0000-0000-000000000050',
   '00000000-0000-0000-0000-000000000002',
-  1, '["00000000-0000-0000-0000-000000000070"]'::jsonb
+  1, '["00000000-0000-0000-0000-000000000070", "00000000-0000-0000-0000-0000000000c0"]'::jsonb
 );
 
 INSERT INTO assignments (id, walkbook_id, campaign_id, user_id, assigned_by, status)

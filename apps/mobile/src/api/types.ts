@@ -46,23 +46,44 @@ export interface Geom {
   lng: number;
 }
 
-/** Mirrors contact_attempts columns in camelCase, per API_CONTRACT.md. */
+/**
+ * Mirrors contact_attempts columns in camelCase, per API_CONTRACT.md. `id`, `campaignId`,
+ * `assignmentId`, `walkbookId`, `turfId`, `deviceId`, and `householdId` are all required by
+ * the API's actual validation (apps/api/src/services/verification/contactAttempt.ts) even
+ * though they weren't spelled out in the original contract doc -- found by driving a real
+ * submission end to end and getting `{"status":"error","error":"invalid_request"}` back for
+ * every one of them despite an HTTP 200. `recordContactAttempt` (db/writes.ts) fills in `id`
+ * and `recordedAt`; the caller (DoorScreen) supplies the rest from src/config/demoIds.ts.
+ */
 export interface ContactAttemptPayload {
+  id: string;
+  campaignId: string;
+  assignmentId: string;
+  walkbookId: string;
+  turfId: string;
   addressId: string;
-  householdId?: string;
+  householdId: string;
   voterId?: string;
+  deviceId: string;
   shiftId: string;
   arriveAt: string;
   arriveGeom: Geom;
   arriveAccuracyM: number;
+  recordedAt: string;
   resultCode: ContactResultCode;
   notes?: string;
   idempotencyKey: string;
 }
 
+// Must match db/migrations/0005_contact_attempts.sql's contact_result_code enum exactly --
+// the API's resultCode validation is a bare z.string() (see
+// apps/api/src/services/verification/contactAttempt.ts), so a value that isn't one of these
+// passes the API's own validation and only fails at the Postgres INSERT, which the batch
+// endpoint reports as a per-item error rather than surfacing loudly. Found live: this
+// contained three drifted values (spoke_with_other, inaccessible_dog, vacant).
 export type ContactResultCode =
   | 'spoke_with_target'
-  | 'spoke_with_other'
+  | 'spoke_with_other_household_member'
   | 'not_home'
   | 'refused'
   | 'moved'
@@ -70,8 +91,8 @@ export type ContactResultCode =
   | 'language_barrier'
   | 'inaccessible_gate'
   | 'inaccessible_locked_building'
-  | 'inaccessible_dog'
-  | 'vacant'
+  | 'inaccessible_dog_hazard'
+  | 'vacant_construction'
   | 'wrong_address'
   | 'left_literature';
 

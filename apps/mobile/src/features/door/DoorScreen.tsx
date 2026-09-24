@@ -12,6 +12,7 @@ import { ResultCodeButtons } from './ResultCodeButtons';
 import { SosButton } from '../safety/SosButton';
 import { checkPhotoVerificationDue } from '../verification/verificationApi';
 import { colors, spacing } from '../../ui/theme';
+import { DEMO_CAMPAIGN_ID, DEMO_DEVICE_ID, DEMO_ASSIGNMENT_ID, DEMO_TURF_ID } from '../../config/demoIds';
 
 interface Props {
   shiftId: string;
@@ -60,9 +61,15 @@ export function DoorScreen({ shiftId, onVerificationDue, onOpenDebug }: Props) {
     if (!db || !current) return;
 
     const geom = await getGeom();
+    const wb = await getActiveWalkbook(db);
     await recordContactAttempt(db, {
+      campaignId: DEMO_CAMPAIGN_ID,
+      assignmentId: DEMO_ASSIGNMENT_ID,
+      walkbookId: wb?.id ?? '',
+      turfId: DEMO_TURF_ID,
+      deviceId: DEMO_DEVICE_ID,
       addressId: current.id,
-      householdId: current.household.id || undefined,
+      householdId: current.household.id,
       voterId: selectedVoterId ?? undefined,
       shiftId,
       arriveAt: new Date().toISOString(),

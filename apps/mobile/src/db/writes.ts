@@ -14,10 +14,18 @@ import type { ContactAttemptPayload, PhotoVerificationSubmitPayload } from '../a
 
 export async function recordContactAttempt(
   db: SQLiteDatabase,
-  input: Omit<ContactAttemptPayload, 'idempotencyKey'>
+  input: Omit<ContactAttemptPayload, 'idempotencyKey' | 'id' | 'recordedAt'>
 ): Promise<{ outboxId: string }> {
   const idempotencyKey = uuidv4();
-  const payload: ContactAttemptPayload = { ...input, idempotencyKey };
+  // `id` is client-generated per build-prompt section 4.5 ("id (uuid, generated on device)").
+  // `recordedAt` (device clock at entry) is set alongside `arriveAt` here rather than asking
+  // every caller to pass a near-duplicate timestamp.
+  const payload: ContactAttemptPayload = {
+    ...input,
+    id: uuidv4(),
+    recordedAt: input.arriveAt,
+    idempotencyKey,
+  };
   const row = await enqueue(db, {
     entityType: 'contact_attempt',
     endpoint: '/contact-attempts/batch',

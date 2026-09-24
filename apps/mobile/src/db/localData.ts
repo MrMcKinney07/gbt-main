@@ -100,7 +100,21 @@ export async function setAccessStatus(
   ]);
 }
 
-/** Demo/offline-first-proof-of-concept seed: a small walkbook with two doors. */
+/**
+ * Demo/offline-first-proof-of-concept seed: a small walkbook with two doors.
+ *
+ * Every id below is a REAL UUID matching a real row in db/seed.sql -- not a placeholder. An
+ * earlier version of this seed used invented, non-UUID string ids ("addr-demo-1", "hh-demo-1",
+ * "voter-1", ...) with no corresponding server-side rows at all, which is fine for local-only
+ * UI development but meant every contact-attempt this app ever recorded failed the API's
+ * foreign-key/UUID validation the moment it tried to sync -- silently, since the batch
+ * endpoint returns HTTP 200 with a per-item error rather than an HTTP-level failure. See
+ * apps/mobile/README.md "Web preview" and docs/API_CONTRACT.md's "Demo fixed IDs" for the
+ * full story. Because these now match real rows, this app's local household/voter model is
+ * also intentionally simpler than the real schema (one voter per household, no second
+ * "other resident" member) -- inventing a second local-only person here would recreate the
+ * exact same bug the moment a canvasser selected them as the contact.
+ */
 export async function seedDemoWalkbookIfEmpty(db: SQLiteDatabase): Promise<void> {
   const existing = await getActiveWalkbook(db);
   if (existing) return;
@@ -108,26 +122,26 @@ export async function seedDemoWalkbookIfEmpty(db: SQLiteDatabase): Promise<void>
   const walkbookId = '00000000-0000-0000-0000-0000000000a0'; // matches API_CONTRACT demo walkbook id
   await db.runAsync(
     'INSERT INTO walkbooks (id, name, turf_name, door_count, synced_at) VALUES (?, ?, ?, ?, ?)',
-    [walkbookId, 'Elm Street Turf', 'Precinct 14', 2, new Date().toISOString()]
+    [walkbookId, 'Sun Ray Estates A', 'Precinct 14', 2, new Date().toISOString()]
   );
 
-  const addr1 = 'addr-demo-1';
-  const addr2 = 'addr-demo-2';
+  const addr1 = '00000000-0000-0000-0000-000000000070'; // 412 Oak St -- db/seed.sql
+  const addr2 = '00000000-0000-0000-0000-0000000000c0'; // 414 Oak St Apt 2 -- db/seed.sql
   await db.runAsync(
     'INSERT INTO addresses (id, walkbook_id, line1, unit, lat, lng, sort_order, access_status, access_notes) VALUES (?,?,?,?,?,?,?,?,?)',
-    [addr1, walkbookId, '142 Elm St', null, 41.5, -87.6, 1, 'none', null]
+    [addr1, walkbookId, '412 Oak St', null, 38.5785, -121.4901, 1, 'none', null]
   );
   await db.runAsync(
     'INSERT INTO addresses (id, walkbook_id, line1, unit, lat, lng, sort_order, access_status, access_notes) VALUES (?,?,?,?,?,?,?,?,?)',
-    [addr2, walkbookId, '144 Elm St', 'Apt 2', 41.5001, -87.6001, 2, 'dog', 'Large dog in yard, knock loudly']
+    [addr2, walkbookId, '414 Oak St', 'Apt 2', 38.5786, -121.4899, 2, 'dog', 'Large dog in yard, knock loudly']
   );
 
-  const hh1 = 'hh-demo-1';
-  const hh2 = 'hh-demo-2';
+  const hh1 = '00000000-0000-0000-0000-000000000080'; // db/seed.sql
+  const hh2 = '00000000-0000-0000-0000-0000000000c1'; // db/seed.sql
   await db.runAsync('INSERT INTO households (id, address_id, display_name) VALUES (?,?,?)', [
     hh1,
     addr1,
-    'Nguyen household',
+    'Gonzalez household',
   ]);
   await db.runAsync('INSERT INTO households (id, address_id, display_name) VALUES (?,?,?)', [
     hh2,
@@ -137,14 +151,10 @@ export async function seedDemoWalkbookIfEmpty(db: SQLiteDatabase): Promise<void>
 
   await db.runAsync(
     'INSERT INTO voters (id, household_id, first_name, last_name, is_target) VALUES (?,?,?,?,?)',
-    ['voter-1', hh1, 'Mai', 'Nguyen', 1]
+    ['00000000-0000-0000-0000-000000000090', hh1, 'Maria', 'Gonzalez', 1] // db/seed.sql
   );
   await db.runAsync(
     'INSERT INTO voters (id, household_id, first_name, last_name, is_target) VALUES (?,?,?,?,?)',
-    ['voter-2', hh1, 'David', 'Nguyen', 0]
-  );
-  await db.runAsync(
-    'INSERT INTO voters (id, household_id, first_name, last_name, is_target) VALUES (?,?,?,?,?)',
-    ['voter-3', hh2, 'Sofia', 'Alvarez', 1]
+    ['00000000-0000-0000-0000-0000000000c2', hh2, 'Sofia', 'Alvarez', 1] // db/seed.sql
   );
 }
