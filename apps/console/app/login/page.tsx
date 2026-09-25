@@ -63,15 +63,15 @@ export default function LoginPage() {
         <EagleMark className="h-14 w-14" fill="white" />
       </div>
 
-      {/* The eagle: a transparent-background cutout (public/brand/bald-eagle-perched-cutout-v2.png,
+      {/* The eagle: a transparent-background cutout (public/brand/bald-eagle-perched-cutout-v3.png,
           credit in CREDIT.md) of the bird perched on a branch rather than in flight, pinned
           large in the top-right corner rather than sitting in the centered form column — a
-          corner graphic rather than a hero panel. Filename bumped to -v2 when the head-hole
-          bug was fixed so browsers that had cached the broken cutout under the old filename
-          fetch the corrected image instead of serving it from cache. */}
+          corner graphic rather than a hero panel. Filename bumped each time the cutout's
+          background-removal bugs got fixed so browsers that cached a broken version under
+          an old filename fetch the corrected image instead of serving it from cache. */}
       {/* eslint-disable-next-line @next/next/no-img-element -- decorative, no next/image benefit for a fixed-position PNG cutout */}
       <img
-        src="/brand/bald-eagle-perched-cutout-v2.png"
+        src="/brand/bald-eagle-perched-cutout-v3.png"
         alt=""
         className="pointer-events-none fixed right-0 top-0 z-0 h-[70vh] w-auto max-h-[640px] opacity-90 drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)]"
       />
