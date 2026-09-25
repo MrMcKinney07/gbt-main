@@ -112,29 +112,6 @@ h1, h2, h3, .font-display {
   background-size: 220px 220px;
 }
 
-/* Eagle flying across the login page: left off-screen to right off-screen, with a gentle
-   vertical bob so it reads as gliding rather than sliding on rails. Loops continuously with
-   a pause at each end. Respects reduced-motion. */
-@keyframes fly-across {
-  0% { transform: translate(-20vw, 0) scale(1) rotate(-2deg); opacity: 0; }
-  6% { opacity: 1; }
-  25% { transform: translate(30vw, -18px) scale(1.05) rotate(1deg); }
-  50% { transform: translate(70vw, 6px) scale(1) rotate(-1deg); }
-  75% { transform: translate(105vw, -10px) scale(0.97) rotate(2deg); }
-  94% { opacity: 1; }
-  100% { transform: translate(130vw, 0) scale(0.95) rotate(-2deg); opacity: 0; }
-}
-.flying-eagle {
-  animation: fly-across 16s ease-in-out infinite;
-  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.45));
-}
-@media (prefers-reduced-motion: reduce) {
-  .flying-eagle {
-    animation: none;
-    left: 8%;
-    opacity: 0.9;
-  }
-}
 
 /* Ribbon banner: a folded double-pointed ribbon in flat red/white/blue bands, top to
    bottom, in that order — the one

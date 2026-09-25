@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth, ApiError } from "@/lib/auth-context";
-import { EagleMark } from "@/components/brand/EagleMark";
 
 const DEMO_ACCOUNTS = [
   { label: "Field director", email: "director@demo.local", role: "field_director" },
@@ -56,13 +55,6 @@ export default function LoginPage() {
 
   return (
     <div className="stars-field relative flex min-h-screen w-full flex-1 flex-col items-center justify-center overflow-hidden bg-brand-navy-deep px-4 py-10">
-      {/* An eagle gliding across the full page, left off-screen to right off-screen, looping.
-          See .flying-eagle/@keyframes fly-across in globals.css. This is the small vector
-          accent; the large real photo cutout below is the main graphic. */}
-      <div className="flying-eagle pointer-events-none fixed left-0 top-[10%] z-20" aria-hidden="true">
-        <EagleMark className="h-14 w-14" fill="white" />
-      </div>
-
       {/* The eagle: a transparent-background cutout (public/brand/bald-eagle-perched-cutout-v3.png,
           credit in CREDIT.md) of the bird perched on a branch rather than in flight, pinned
           large in the top-right corner rather than sitting in the centered form column — a
