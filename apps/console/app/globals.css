@@ -1,0 +1,166 @@
+@import "tailwindcss";
+
+:root {
+  --background: #faf9f6;
+  --foreground: #0e1a2b;
+
+  /* Brand palette — deep navy / crisp white / a restrained flag-red used ONLY as a decorative
+     accent (the tricolor rule under the header, small flourishes) and NEVER on an
+     interactive or status element. It is a distinct hue/weight from --color-safety on
+     purpose (a muted brick vs. an alert crimson) specifically so it can never be mistaken
+     for a safety signal — see the note on --color-safety below and docs/ARCHITECTURE.md.
+     This is the one deliberate exception to "brand chrome stays out of the safety/
+     accountability palette": it is fixed decoration, never a state, never clickable. */
+  --color-brand-navy: #0e2148;
+  --color-brand-navy-deep: #081226;
+  --color-brand-blue: #2a4d8f;
+  --color-brand-cream: #faf9f6;
+  --color-brand-ink: #0e1a2b;
+  --color-brand-accent-red: #8a2432;
+  --color-brand-hairline: #d8d3c7;
+
+  /* Reserved monitoring-family colors — see lib/colors.ts and docs/ARCHITECTURE.md.
+     SAFETY = red family, ACCOUNTABILITY = violet family. Never reused for anything else,
+     never swapped between the two, never blended into a shared "alert" color. */
+  --color-safety: #dc2626;
+  --color-safety-strong: #991b1b;
+  --color-safety-soft: #fee2e2;
+  --color-safety-border: #fca5a5;
+  --color-safety-text: #7f1d1d;
+
+  --color-accountability: #7c3aed;
+  --color-accountability-strong: #5b21b6;
+  --color-accountability-soft: #ede9fe;
+  --color-accountability-border: #c4b5fd;
+  --color-accountability-text: #4c1d95;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-geist-mono);
+
+  --color-brand-navy: var(--color-brand-navy);
+  --color-brand-navy-deep: var(--color-brand-navy-deep);
+  --color-brand-blue: var(--color-brand-blue);
+  --color-brand-cream: var(--color-brand-cream);
+  --color-brand-ink: var(--color-brand-ink);
+  --color-brand-accent-red: var(--color-brand-accent-red);
+  --color-brand-hairline: var(--color-brand-hairline);
+
+  --color-safety: var(--color-safety);
+  --color-safety-strong: var(--color-safety-strong);
+  --color-safety-soft: var(--color-safety-soft);
+  --color-safety-border: var(--color-safety-border);
+  --color-safety-text: var(--color-safety-text);
+
+  --color-accountability: var(--color-accountability);
+  --color-accountability-strong: var(--color-accountability-strong);
+  --color-accountability-soft: var(--color-accountability-soft);
+  --color-accountability-border: var(--color-accountability-border);
+  --color-accountability-text: var(--color-accountability-text);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-display), Georgia, "Times New Roman", serif;
+}
+
+/* The tricolor rule: a quiet nod to the palette without ever touching an interactive
+   element's color. Three flat bands, no gradient, no shine — restraint is the "expensive"
+   part. */
+.tricolor-rule {
+  height: 3px;
+  background: linear-gradient(
+    to right,
+    var(--color-brand-navy) 0%,
+    var(--color-brand-navy) 33.3%,
+    var(--color-brand-cream) 33.3%,
+    var(--color-brand-cream) 66.6%,
+    var(--color-brand-accent-red) 66.6%,
+    var(--color-brand-accent-red) 100%
+  );
+}
+
+.card-premium {
+  background: #ffffff;
+  border: 1px solid var(--color-brand-hairline);
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 2px rgba(14, 26, 43, 0.04), 0 8px 24px -12px rgba(14, 26, 43, 0.12);
+}
+
+/* Scattered five-point stars on a dark field, CSS-only (no image request). A small tile
+   repeated across the login page's navy background — echoes a flag's canton without
+   drawing one literally. Kept low-opacity so it reads as texture, not clutter. */
+.stars-field {
+  background-image:
+    radial-gradient(1.5px 1.5px at 10% 20%, rgba(255,255,255,0.5) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 70% 60%, rgba(255,255,255,0.4) 50%, transparent 51%),
+    radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,0.45) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 85% 15%, rgba(255,255,255,0.35) 50%, transparent 51%),
+    radial-gradient(1px 1px at 25% 50%, rgba(255,255,255,0.4) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 55% 30%, rgba(255,255,255,0.3) 50%, transparent 51%),
+    radial-gradient(1px 1px at 90% 75%, rgba(255,255,255,0.4) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 15% 90%, rgba(255,255,255,0.35) 50%, transparent 51%);
+  background-size: 220px 220px;
+}
+
+
+/* Ribbon banner: a folded double-pointed ribbon in flat red/white/blue bands, top to
+   bottom, in that order — the one
+   place on the page allowed to show all three colors as literal stripes (everywhere else
+   red stays reserved for accents/safety per docs/ARCHITECTURE.md; this is a static
+   decorative banner shape, never an interactive or status element). */
+.ribbon-banner {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 2.25rem;
+  clip-path: polygon(0% 50%, 9% 0%, 91% 0%, 100% 50%, 91% 100%, 9% 100%);
+  background: linear-gradient(
+    to bottom,
+    var(--color-brand-accent-red) 0%,
+    var(--color-brand-accent-red) 33%,
+    #ffffff 33%,
+    #ffffff 67%,
+    var(--color-brand-navy) 67%,
+    var(--color-brand-navy) 100%
+  );
+  box-shadow: 0 6px 16px -4px rgba(0, 0, 0, 0.5);
+}
+.ribbon-banner__text {
+  color: var(--color-brand-navy);
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.001); /* keeps text crisp over the middle white band */
+}
+
+.maplibregl-popup-content {
+  padding: 0 !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.2) !important;
+}
+
+/* Safety event markers pulse — a purely visual cue reserved for the safety family so it
+   never gets reused for accountability markers (see lib/colors.ts). */
+@keyframes safety-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.55);
+  }
+  100% {
+    box-shadow: 0 0 0 14px rgba(220, 38, 38, 0);
+  }
+}
+.safety-marker-pulse {
+  animation: safety-pulse 1.6s ease-out infinite;
+}

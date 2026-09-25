@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_USER: gbt
+      POSTGRES_PASSWORD: gbt_dev_only
+      POSTGRES_DB: gbt
+    ports:
+      - "5432:5432"
+    volumes:
+      - gbt_pg_data:/var/lib/postgresql/data
+      - ./migrations:/migrations:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gbt -d gbt"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  gbt_pg_data:
